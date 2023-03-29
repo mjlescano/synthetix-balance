@@ -6,7 +6,7 @@ import { getAddress, isAddress } from "viem";
 import { useDebounce } from "use-debounce";
 import { useEffect, useMemo, useState } from "react";
 
-import { getWalletBalances } from "../hooks/get-balances";
+import { getEcosystemBalances, getWalletBalances } from "../hooks/get-balances";
 
 interface Params {
   params: {
@@ -27,7 +27,8 @@ export default function Page({ params }: Params) {
   const [walletStatus, setWalletStatus] = useState<Status>("default");
   const [validAddress, setValidAddress] = useState<`0x${string}`>();
   const [address] = useDebounce(validAddress as `0x${string}`, 600);
-  const walletBalances = getWalletBalances(address);
+  const ecosystemBalances = getEcosystemBalances();
+  const walletBalances = getWalletBalances(address, ecosystemBalances);
 
   useEffect(() => {
     if (!walletAddress) {
@@ -79,22 +80,39 @@ export default function Page({ params }: Params) {
           <Table.Header>
             <Table.Column>Network</Table.Column>
             <Table.Column>Value (Gwei)</Table.Column>
+            <Table.Column>Percent</Table.Column>
           </Table.Header>
           <Table.Body>
-            <Table.Row key="1">
+            <Table.Row>
               <Table.Cell>L1</Table.Cell>
-              <Table.Cell>{50}</Table.Cell>
+              <Table.Cell>{ecosystemBalances.l1[0].toString()}</Table.Cell>
+              <Table.Cell>{ecosystemBalances.l1[1].toString()}%</Table.Cell>
             </Table.Row>
-            <Table.Row key="2">
+            <Table.Row>
               <Table.Cell>L2</Table.Cell>
-              <Table.Cell>{50}</Table.Cell>
+              <Table.Cell>{ecosystemBalances.l2[0].toString()}</Table.Cell>
+              <Table.Cell>{ecosystemBalances.l2[1].toString()}%</Table.Cell>
             </Table.Row>
-            <Table.Row key="2">
+            <Table.Row>
               <Table.Cell>
-                <Text b>Total</Text>
+                <Text b>Linear Total</Text>
               </Table.Cell>
               <Table.Cell>
-                <Text b>{100}</Text>
+                <Text b>{ecosystemBalances.linearTotal[0].toString()}</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text b>{ecosystemBalances.linearTotal[1].toString()}%</Text>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <Text b>Sqrt Total</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text b>{ecosystemBalances.sqrtTotal[0].toString()}</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text b>{ecosystemBalances.sqrtTotal[1].toString()}%</Text>
               </Table.Cell>
             </Table.Row>
           </Table.Body>
@@ -131,22 +149,28 @@ export default function Page({ params }: Params) {
             <Table.Header>
               <Table.Column>&nbsp;</Table.Column>
               <Table.Column>Value (Gwei)</Table.Column>
+              <Table.Column>Percent</Table.Column>
             </Table.Header>
             <Table.Body>
               <Table.Row key="1">
                 <Table.Cell>Balance L1</Table.Cell>
-                <Table.Cell>{walletBalances.l1.toString()}</Table.Cell>
+                <Table.Cell>{walletBalances.l1[0].toString()}</Table.Cell>
+                <Table.Cell>{walletBalances.l1[1].toString()}%</Table.Cell>
               </Table.Row>
               <Table.Row key="2">
                 <Table.Cell>Balance L2</Table.Cell>
-                <Table.Cell>{walletBalances.l2.toString()}</Table.Cell>
+                <Table.Cell>{walletBalances.l2[0].toString()}</Table.Cell>
+                <Table.Cell>{walletBalances.l2[1].toString()}%</Table.Cell>
               </Table.Row>
               <Table.Row key="3">
                 <Table.Cell>
                   <Text b>Linear Voting Power</Text>
                 </Table.Cell>
                 <Table.Cell>
-                  <Text b>{walletBalances.linearTotal.toString()}</Text>
+                  <Text b>{walletBalances.linearTotal[0].toString()}</Text>
+                </Table.Cell>
+                <Table.Cell>
+                  <Text b>{walletBalances.linearTotal[1].toString()}%</Text>
                 </Table.Cell>
               </Table.Row>
               <Table.Row key="4">
@@ -154,7 +178,10 @@ export default function Page({ params }: Params) {
                   <Text b>Sqrt Voting Power</Text>
                 </Table.Cell>
                 <Table.Cell>
-                  <Text b>{walletBalances.sqrtTotal.toString()}</Text>
+                  <Text b>{walletBalances.sqrtTotal[0].toString()}</Text>
+                </Table.Cell>
+                <Table.Cell>
+                  <Text b>{walletBalances.sqrtTotal[1].toString()}%</Text>
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
