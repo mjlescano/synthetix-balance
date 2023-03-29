@@ -1,4 +1,9 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "prettier.enable": true,
+  "eslint.enable": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "sort-imports.on-save": true,
+  "sort-imports.languages": ["javascript", "typescript"]
 }

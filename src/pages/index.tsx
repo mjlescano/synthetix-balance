@@ -1,28 +1,37 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import Head from "next/head";
-import { Input, Container, Spacer, Text, Table } from "@nextui-org/react";
+import { Container, Input, Spacer, Table, Text } from "@nextui-org/react";
 import { getAddress, isAddress } from "viem";
 import { useDebounce } from "use-debounce";
+import { useEffect, useMemo, useState } from "react";
+
 import { getWalletBalances } from "../hooks/get-balances";
 
-interface Params extends BaseParams {
+interface Params {
   params: {
-    address?: string;
+    address?: `0x${string}`;
   };
 }
 
-export default function Page({ params }: BaseProps) {
+type Status =
+  | "default"
+  | "error"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning";
+
+export default function Page({ params }: Params) {
   const [walletAddress, setWalletAddress] = useState("");
-  const [walletStatus, setWalletStatus] = useState("default");
-  const [validAddress, setValidAddress] = useState("");
-  const [address] = useDebounce(validAddress, 600);
+  const [walletStatus, setWalletStatus] = useState<Status>("default");
+  const [validAddress, setValidAddress] = useState<`0x${string}`>();
+  const [address] = useDebounce(validAddress as `0x${string}`, 600);
   const walletBalances = getWalletBalances(address);
 
   useEffect(() => {
     if (!walletAddress) {
-      setValidAddress("");
+      setValidAddress(undefined);
       setWalletStatus("default");
       return;
     }
@@ -34,7 +43,7 @@ export default function Page({ params }: BaseProps) {
       setWalletStatus("default");
     } else {
       setWalletStatus("error");
-      setValidAddress("");
+      setValidAddress(undefined);
     }
   }, [walletAddress]);
 
@@ -120,7 +129,7 @@ export default function Page({ params }: BaseProps) {
             css={{ height: "auto", minWidth: "100%", fontFamily: "monospace" }}
           >
             <Table.Header>
-              <Table.Column></Table.Column>
+              <Table.Column>&nbsp;</Table.Column>
               <Table.Column>Value (Gwei)</Table.Column>
             </Table.Header>
             <Table.Body>
